@@ -13,7 +13,8 @@ import { loadAllPlayersEver, loadPlayerHistory } from "../database/player.js";
 import { loadPredictionsStandings } from "../database/prediction.js";
 
 const app = express();
-const port = +process.env.expressPort ?? 3001;
+const envPortExists = !!process.env.expressPort;
+const port = envPortExists ? process.env.expressPort : '3001';
 
 app.use(cors());
 
@@ -78,6 +79,6 @@ app.get("/api/players/:id", async (req, res) => {
 });
 
 app.listen(port, async () => {
-  console.log(`Express server running on port ${port}...`);
+  console.log(`Express server running on port ${+port}...`);
   await openDb();
 });
