@@ -11,6 +11,7 @@ import { loadPlayerStats } from "../database/pstat.js";
 import { loadDraft } from "../database/draft.js";
 import { loadAllPlayersEver, loadPlayerHistory } from "../database/player.js";
 import { loadPredictionsStandings } from "../database/prediction.js";
+import { loadMetadata } from "../database/metadata.js";
 
 const app = express();
 const envPortExists = !!process.env.expressPort;
@@ -74,6 +75,12 @@ app.get("/api/players", async (req, res) => {
 
 app.get("/api/players/:id", async (req, res) => {
   const data = await loadPlayerHistory(req.params.id);
+  res.set("Access-Control-Allow-Origin", "*");
+  res.send(JSON.stringify(data));
+});
+
+app.get("/api/metadata", async (req, res) => {
+  const data = await loadMetadata();
   res.set("Access-Control-Allow-Origin", "*");
   res.send(JSON.stringify(data));
 });

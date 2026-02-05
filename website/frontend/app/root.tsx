@@ -4,11 +4,19 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration,
+  ScrollRestoration, useMatches,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { getApiHost }  from "~/utils";
+
+export type metadataQuery = {
+  title: string;
+  description: string;
+  content: string;
+  format: string;
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -27,10 +35,11 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ matches }: Route.MetaArgs) {
+  const metadata = matches[0].data;
   return [
-    { title: "Mushi League" },
-    { name: "description", content: "The ADV OU team tournament" },
+    { title: metadata.title },
+    { name: metadata.description, content: metadata.content },
   ];
 }
 
@@ -83,4 +92,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       )}
     </main>
   );
+}
+
+export async function loader({ params: {}, request }: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  return (await (
+      await fetch(`${getApiHost(url)}/api/metadata`)
+  ).json()) as metadataQuery;
 }

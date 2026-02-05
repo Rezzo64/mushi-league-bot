@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/welcome";
 import { getApiHost } from "~/utils";
+import { type metadataQuery } from "~/root";
 
 type Season = {
   number: number;
@@ -19,11 +20,12 @@ export default function Welcome({ loaderData }: Route.ComponentProps) {
   const currentSeason = loaderData.hasCurrentSeason
     ? loaderData.seasons[0]
     : null;
+  const metadataContent = loaderData.metadata.content;
 
   return (
     <div className="flex flex-col items-center">
       <h1 className="mb-8 text-center">
-        Mushi League, the ADV OU team tournament
+          {metadataContent}
       </h1>
       {currentSeason && (
         <>
@@ -68,8 +70,8 @@ export default function Welcome({ loaderData }: Route.ComponentProps) {
 export async function loader({ request }: Route.LoaderArgs) {
     const url = new URL(request.url);
     const rawData = (await (
-    await fetch(`${getApiHost(url)}/api/seasons`)
-  ).json()) as SeasonsQuery;
+      await fetch(`${getApiHost(url)}/api/seasons`)
+    ).json()) as SeasonsQuery;
 
   const lastNumber = rawData.seasons[0].number;
   const firstNumber = rawData.seasons[rawData.seasons.length - 1].number;
@@ -80,5 +82,8 @@ export async function loader({ request }: Route.LoaderArgs) {
       number: lastNumber - i,
       hasData: lastNumber - i >= firstNumber,
     })),
+    metadata: await (
+        await fetch(`${getApiHost(url)}/api/metadata`)
+    ).json() as metadataQuery,
   };
 }
