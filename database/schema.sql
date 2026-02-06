@@ -155,3 +155,10 @@ CREATE TABLE IF NOT EXISTS "roster" (
 	UNIQUE("season","team","player"),
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
+CREATE TABLE IF NOT EXISTS "metadata" (
+    "id" INTEGER NOT NULL CHECK(id = 1) UNIQUE,
+    "title"	TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "format" TEXT NOT NULL
+);
